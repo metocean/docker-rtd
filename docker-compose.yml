@@ -3,9 +3,12 @@ rtd:
     build: .
     volumes:
         - ./db:/persistent
+        - ./key/id_rsa:/root/.ssh/id_rsa
+        - ./key/id_rsa.pub:/root/.ssh/id_rsa.pub
+
     environment:
         - "TEST_DATA=yes"
-        - "RTD_PRODUCTION_DOMAIN=production-domain:80"
+        - "RTD_PRODUCTION_DOMAIN=localhost:80"
     links:
         - elasticsearch
         - redis
@@ -21,7 +24,7 @@ nginx:
 elasticsearch:
     restart: always
     image: elasticsearch:latest
-    command: elasticsearch -Des.network.host=0.0.0.0
+    command: elasticsearch -Ees.network.host=0.0.0.0
     ports:
         - "9200:9200"
         - "9300:9300"
