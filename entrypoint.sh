@@ -50,6 +50,6 @@ fi
 
 echo "yes" | python ./manage.py collectstatic
 
-
 #exec "gunicorn" "$@"
+exec python ./manage.py celeryd -l INFO &
 exec python ./manage.py "$@"
