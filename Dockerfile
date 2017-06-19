@@ -11,13 +11,24 @@ FROM python:2.7-onbuild
 RUN apt-get update && \
     apt-get -y install libxml2-dev libxslt1-dev zlib1g-dev openssh-client build-essential && \
 #    pip install gunicorn==${GUNICORN_VERSION} && \
+    libproj-dev libgdal-dev python-gdal libgeos-dev gfortran && \
     apt-get -y autoremove && \
     apt-get clean
 
-## Apply our own overrides
-#COPY local_settings.py /usr/src/app/readthedocs.org/readthedocs/settings/local_settings.py
+# Install proj from source
+RUN cd /tmp &&\
+    wget http://download.osgeo.org/proj/proj-4.9.2.tar.gz &&\
+    tar -xvf proj-4.9.2.tar.gz  &&\
+    cd proj-4.9.2 &&\
+    ./configure &&\
+    make install &&\
+    cd &&\
+    rm -fr /tmp/proj-4.9.2 /tmp/proj-4.9.2.tar.gz
 
-RUN cp ./local_settings.py.example readthedocs.org/readthedocs/settings/local_settings.py
+## Apply our own overrides
+COPY local_settings.py /usr/src/app/readthedocs.org/readthedocs/settings/local_settings.py
+
+# RUN cp ./local_settings.py.example readthedocs.org/readthedocs/settings/local_settings.py
 
 ## Import our private key for cloning private repos
 RUN mkdir /root/.ssh
