@@ -5,13 +5,13 @@ FROM python:2.7-onbuild
 # 3) COPY . /usr/src/app
 
 #ENV GUNICORN_VERSION 19.3.0
+# pip install gunicorn==${GUNICORN_VERSION} && \
 
 ## Install our dependencies
 
 RUN apt-get update && \
-    apt-get -y install libxml2-dev libxslt1-dev zlib1g-dev openssh-client build-essential && \
-#    pip install gunicorn==${GUNICORN_VERSION} && \
-    libproj-dev libgdal-dev python-gdal libgeos-dev gfortran && \
+    apt-get -y install libxml2-dev libxslt1-dev zlib1g-dev openssh-client build-essential \
+               libproj-dev libgdal-dev python-gdal libgeos-dev gfortran texlive-full && \
     apt-get -y autoremove && \
     apt-get clean
 
@@ -24,6 +24,8 @@ RUN cd /tmp &&\
     make install &&\
     cd &&\
     rm -fr /tmp/proj-4.9.2 /tmp/proj-4.9.2.tar.gz
+
+RUN pip install --upgrade numpy scipy matplotlib
 
 ## Apply our own overrides
 COPY local_settings.py /usr/src/app/readthedocs.org/readthedocs/settings/local_settings.py
